@@ -1,0 +1,92 @@
+---
+title: "lecture 2"
+output:
+  pdf_document: default
+  html_notebook: default
+---
+次のRのプログラムは，2つのグループ（非肥満グループlean，肥満グループobese）におけるアウトカムYである総エネルギー消費量（MJ/day）データを作るものである． 
+
+
+```{r}
+lean <- c(6.13,7.05,7.48,7.48,7.53,7.58,7.9,8.08,8.09,8.11,8.40, 10.15,10.88)
+obese <- c(8.79,9.19,9.21,9.68,9.69,9.97,11.51,11.85,12.79) 
+```
+
+Rのfunction関数を用いて，次の4つのマクロ関数を作成せよ． 
+
+(1)変数Yについて，1つの群の母平均の95%信頼区間を計算する． 
+(2)変数Yについて，1つの群の母平均の検定を行う． 
+(3)変数Yについて，独立な2つの群の母平均の差の95%信頼区間を計算する． 
+(4)変数Yについて，独立な2つの群の母平均の検定（両側検定）を行う． 
+
+(1)変数Yについて，1つの群の母平均の95%信頼区間を計算する．
+
+```{r}
+ci_1mean = function(dat, ci_lev)
+{
+  n = length(dat)
+  tval = qt(1-((1-ci_lev)/2), n-1)
+  mean1 = mean(dat)
+  sd1 = sd(dat)
+  return(list(nmsd = c(n, mean1, sd1),
+              civals = c(mean1 - tval*sd1/sqrt(n),
+              mean1+tval*sd1/sqrt(n)),
+              ci_lev=ci_lev))
+  
+}
+
+ci_1mean(dat=lean, 0.95)
+```
+ 
+上記実行結果を算出すると、
+7.317990 < $\mu$ <8.814318　となる。
+
+(2)変数Yについて，1つの群の母平均の検定を行う． 
+
+```{r}
+test.lean = function(dat, m0)
+{
+  n = length(dat)
+  df = n-1
+  t = abs((mean(dat)-m0)/(sd(dat)/sqrt(n)))
+  pvalue = (1-pt(t, df))*2
+  return(list(df=df,t=t,pvalue=pvalue))
+}
+
+test.lean(dat = lean, m0=10)
+```
+
+pvalue = 0.0001104242
+より帰無仮説は棄却される。
+
+(3)変数Yについて，独立な2つの群の母平均の差の95%信頼区間を計算する．
+
+```{r}
+test.lean_obese = function(dat1,dat2,ci_lev)
+{
+  pooled = sqrt(((length(dat1)-1)*var(dat1) + (length(dat2) - 1 )*var(dat2))/(length(dat1) + length(dat2) - 2))
+  t_den = pooled*sqrt(1/length(dat1)+1/length(dat2))
+  t_num = mean(dat1)-mean(dat2)
+  t = t_num/t_den
+  df = length(dat1) + length(dat2) -1
+  under_score = qt(ci_lev, df)
+  over_score = qt(ci_lev,df,lower.tail = FALSE)
+  return(list(df=df, t=t, under_score = under_score, over_score = over_score))
+}
+
+test.lean_obese(dat1 = lean, dat2 = obese, ci_lev = 0.025)
+```
+
+上記より95%信頼区間は
+
+※t.test(lean, obese, var.equal = T)
+
+を実施した際の結果を表示
+-3.411451 < $\mu$ < -1.051796
+
+(4)変数Yについて，独立な2つの群の母平均の検定（両側検定）を行う
+
+上記を計算した結果
+t = -3.9456
+となり、-3.411451よりも大きい値となるため、有意差があると判断する。
+

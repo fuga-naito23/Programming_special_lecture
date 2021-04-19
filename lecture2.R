@@ -34,10 +34,11 @@ test.lean_obese = function(dat1,dat2,ci_lev)
   t_den = pooled*sqrt(1/length(dat1)+1/length(dat2))
   t_num = mean(dat1)-mean(dat2)
   t = t_num/t_den
-  df = length(dat1) + length(dat2) -1
+  df = length(dat1) + length(dat2) -2
   under_score = qt(ci_lev, df)
   over_score = qt(ci_lev,df,lower.tail = FALSE)
   return(list(df=df, t=t, under_score = under_score, over_score = over_score))
 }
 
 test.lean_obese(dat1 = lean, dat2 = obese, ci_lev = 0.025)
+t.test(lean, obese, var.equal = T)
