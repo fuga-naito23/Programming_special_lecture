@@ -42,3 +42,4 @@ test.lean_obese = function(dat1,dat2,ci_lev)
 
 test.lean_obese(dat1 = lean, dat2 = obese, ci_lev = 0.025)
 t.test(lean, obese, var.equal = T)
+
