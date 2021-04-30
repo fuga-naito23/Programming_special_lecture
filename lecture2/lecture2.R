@@ -11,7 +11,6 @@ ci_1mean = function(dat, ci_lev)
               civals = c(mean1 - tval*sd1/sqrt(n),
               mean1+tval*sd1/sqrt(n)),
               ci_lev=ci_lev))
-  
 }
 
 ci_1mean(dat=lean, 0.95)
